@@ -1,0 +1,63 @@
+{% extends "labeling/base.html" %}
+
+{% block content %}
+
+{% if form.errors %}
+<p>Your username and password didn't match. Please try again.</p>
+{% endif %}
+
+{% if next %}
+{% if user.is_authenticated %}
+<p>Your account doesn't have access to this page. To proceed,
+please login with an account that has access.</p>
+{% else %}
+<p>Please login to see this page.</p>
+{% endif %}
+{% endif %}
+
+<form method="post" action="{% url 'login' %}">
+  {% csrf_token %}
+
+
+  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+    <input class="mdl-textfield__input" type="text" name="username" autofocus="" autocapitalize="none" autocomplete="username" maxlength="150" id="id_username">
+    <label class="mdl-textfield__label" for="id_username">Username</label>
+  </div>
+
+
+  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+    <input class="mdl-textfield__input" type="password" name="password" autocomplete="current-password" id="id_password">
+    <label class="mdl-textfield__label" for="id_password">Password</label>
+  </div>
+
+
+  <input type="submit" value="login" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored login-button">
+
+
+  <input type="hidden" name="next" value="{{ next }}">
+</form>
+
+<p><a href="{% url 'password_reset' %}">Reset password</a></p>
+
+
+
+
+<script>
+  $(document).ready(function() {
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function showDialogOnOpen() {
+      console.log('Taking a break...');
+      await sleep(80);
+      console.log('show model');
+      dialog.showModal()
+    }
+
+    showDialogOnOpen();
+  });
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,110 @@
+button.close {
+  position: inherit;
+  right: 12px;
+}
+
+button.user-button {
+  text-align: center;
+}
+
+.label-chip {
+  margin: 2px;
+  border: solid #999 1px;
+  border-radius: 14px;
+  padding: 5px;
+  background-color: #3a89df;
+  color: #fff;
+  font-weight: bold;
+}
+
+div.page-content {
+  font-size: 16px;
+  margin: 80px auto 0px auto;
+  width: 670px;
+}
+
+#tweet_text {
+  height: 55%;
+  font-size: 22px;
+  line-height: 1.6;
+  word-spacing: 5px;
+}
+
+div#tweet_labels {
+  margin: 10px auto;
+  height: 20%;
+}
+
+#label-button-container {
+  text-align: center;
+}
+
+.mdl-chip {
+  margin: 5px;
+}
+
+.login-button {
+  width: 100%;
+}
+
+#login_name {
+  position: absolute;
+  right: 200px;
+}
+
+.mdl-textfield {
+  width: 100%;
+}
+
+#main_spinner {
+  margin-left: auto;
+  margin-right: auto;
+  width: 28px;
+  display: block;
+}
+
+.bottom_button {
+  width: 157px;
+}
+
+#exclude_tweet_button {
+  color: #eee;
+  background-color: #d50000;
+}
+
+.bottom_buttons_container {
+  text-align: center;
+}
+
+.login_form {
+  height: 140px;
+}
+
+.red_label {
+  background-color: #ff000063;
+}
+
+.blue_label {
+  background-color: #0091ff63;
+}
+
+.green_label {
+  background-color: #5eff0063;
+}
+
+.yellow_label {
+  background-color: #ebff0063;
+}
+
+.purple_label {
+  background-color: #b000ff63;
+}
+
+.orange_label {
+  background-color: #ffa00063;
+}
+
+span.shortcut {
+  color: #d50000;
+  font-weight: bold;
+}
