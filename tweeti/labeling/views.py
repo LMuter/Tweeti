@@ -189,13 +189,7 @@ def get_random_tweet():
 def errornotifier(request):
     e = request.body.decode("utf-8")
 
-    send_mail(
-        'Tweeti error',
-        'Error occured at ' + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "\n\n" + e,
-        'tweetitool@gmail.com',
-        ['laurens.muter@gmail.com'],
-        fail_silently=False,
-    )
+    print('Error occured at ' + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "\n\n" + e)
 
     context = {"message": "notification reported"}
     return JsonResponse(context)
