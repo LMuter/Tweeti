@@ -137,47 +137,25 @@
             </div>
             <div id="label-button-container">
 
-            <button id="relevant" class="mdl-button mdl-js-button mdl-js-ripple-effect"><span class="shortcut">R</span>elevance</button>
-            <ul id="label-containeris-relevant" class="mdl-menu mdl-menu--top-left mdl-js-menu mdl-js-ripple-effect" for="relevant">
-              <li class="mdl-menu__item group-green_label"><span class="shortcut">E</span>xpression of displeasure</li>
-              <li class="mdl-menu__item group-green_label">Encourage <span class="shortcut">G</span>roup action</li>
-              <li class="mdl-menu__item group-green_label"><span class="shortcut">F</span>irst person observation</li>
-              <li class="mdl-menu__item group-green_label"><span class="shortcut">I</span>ncite to action</li>
-              <li class="mdl-menu__item group-green_label"><span class="shortcut">L</span>ocation</li>
-              <li class="mdl-menu__item group-green_label"><span class="shortcut">P</span>oint in time</li>
-              <li class="mdl-menu__item group-green_label"><span class="shortcut">O</span>ther Relevance Type</li>
-            </ul>
+              {% for o in parent_labels %}
+              <button id="{{ o.name }}" class="mdl-button mdl-js-button mdl-js-ripple-effect label-button group-{{ o.color }}">
+                {% autoescape off %}{{ o.label }}{% endautoescape %}
+              </button>
+              {% endfor %}
 
-            <button id="media-related" class="mdl-button mdl-js-button mdl-js-ripple-effect"><span class="shortcut">M</span>edia</button>
-            <ul id="label-containerincident-related" class="mdl-menu mdl-menu--top-left mdl-js-menu mdl-js-ripple-effect" for="media-related">
-              <li class="mdl-menu__item group-red_label"><span class="shortcut">M</span>ainstream media</li>
-              <li class="mdl-menu__item group-red_label"><span class="shortcut">V</span>erified source</li>
-              <li class="mdl-menu__item group-red_label"><span class="shortcut">O</span>ther source</li>
-            </ul>
+              {% for o in  sub_labels %}
 
-            <button id="incident-related" class="mdl-button mdl-js-button mdl-js-ripple-effect"><span class="shortcut">I</span>ncident related</button>
-            <ul id="label-containerevent-related" class="mdl-menu mdl-menu--top-left mdl-js-menu mdl-js-ripple-effect" for="incident-related">
-              <li class="mdl-menu__item group-blue_label"><span class="shortcut">C</span>orona</li>
-              <li class="mdl-menu__item group-blue_label"><span class="shortcut">V</span>iolence</li>
-              <li class="mdl-menu__item group-blue_label"><span class="shortcut">R</span>iot</li>
-              <li class="mdl-menu__item group-blue_label"><span class="shortcut">O</span>ther Incident</li>
-            </ul>
-<button id="behavioral-relevance" class="mdl-button mdl-js-button mdl-js-ripple-effect"><span class="shortcut">B</span>ehavioral relevance</button>
-            <ul id="label-containerlocal" class="mdl-menu mdl-menu--top-left mdl-js-menu mdl-js-ripple-effect" for="behavioral-relevance">
-              <li class="mdl-menu__item group-yellow_label"><span class="shortcut">D</span>ialect</li>
-              <li class="mdl-menu__item group-yellow_label"><span class="shortcut">L</span>ocal expression</li>
-              <li class="mdl-menu__item group-yellow_label"><span class="shortcut">E</span>xpression of discomfort</li>
-              <li class="mdl-menu__item group-yellow_label"><span class="shortcut">S</span>arcasm</li>
-            </ul>
+              <ul id="label-container-{{ o.parent_name }}" class="mdl-menu mdl-menu--top-left mdl-js-menu mdl-js-ripple-effect" for="{{ o.parent_name }}">
 
-            <button id="event-related" class="mdl-button mdl-js-button mdl-js-ripple-effect"><span class="shortcut">E</span>vent related</button>
+                {% for s in  o.sub_labels %}
+                <li class="mdl-menu__item group-{{s.color}}">{% autoescape off %}{{s.label}}{% endautoescape %}</li>
+                {% endfor %}
 
-            <button id="is-related-topic" class="mdl-button mdl-js-button mdl-js-ripple-effect">Related <span class="shortcut">T</span>opic</button>
-
-            <button id="no-labels" class="mdl-button mdl-js-button mdl-js-ripple-effect"><span class="shortcut">N</span>o Labels</button>
+              </ul>
+              {% endfor %}
           </div>
 
-          <!-- NOTE in order to update labels, also check javascript file to update variable window.labels -->
+          <!-- NOTE add label button requires additional steps (1) add javascript function (2) color to css -->
 
           <div class="bottom_buttons_container">
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored bottom_button" id="prev_tweet_button">

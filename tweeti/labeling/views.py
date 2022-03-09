@@ -23,12 +23,62 @@ from labeling.forms import DocumentForm
 from labeling.models import Label, Tweet, Document
 
 
+def get_shortcut_template(shortcut):
+    return f'<span class="shortcut">{shortcut}</span>'
 
 
+def get_label(name, shortcut=None):
+    if shortcut:
+        shortcut_template = get_shortcut_template(shortcut)
+        replace_first_occurrence = 1
+        name = name.replace(shortcut, shortcut_template, replace_first_occurrence)
+    return name
+
+
+def get_sub_label_list(sub_labels, color=None):
+    sub_label_template_list = []
+    for l in sub_labels:
+        c = color or l.label_color
+        sub_label_template_list.append(get_sub_label(l.label_name, l.shortcut, c))
+    return sub_label_template_list
+
+
+def get_sub_labels_context(sub_labels, parent):
+    parent_name = parent.label_name.replace(" ", "_").lower()
+    sub_labels = get_sub_label_list(sub_labels, parent.label_color)
+    return {'parent_name': parent_name,
+            'sub_labels' : sub_labels,
+            }
+
+
+def get_sub_label(name, shortcut, color):
+    label = get_label(name, shortcut)
+    return { 'label': label,
+            'color': color,
+            }
+
+
+def get_buttons(name, shortcut, color=None):
+    return {'label' : get_label(name, shortcut),
+            'name' : name.replace(" ", "-").lower(),
+            'color' : f"{color}" if color else ""}
+
+
+def get_labels():
+    parent_labels = Label.objects.filter(parent_label=None).order_by('order', 'label_name')
+    parent_labels_context = []
+    sub_labels_context = []
+    for l in parent_labels:
+        parent_labels_context.append(get_buttons(l.label_name, l.shortcut, l.label_color))
+    for p in parent_labels:
+        sub_labels = Label.objects.filter(parent_label=p).order_by('order', 'label_name')
+        if sub_labels:
+            sub_labels_context.append(get_sub_labels_context(sub_labels, p))
+    return {"parent_labels": parent_labels_context, "sub_labels": sub_labels_context}
 
 
 def index(request):
-    context = {}
+    context = get_labels()
     if request.user.is_authenticated:
         context["user"] = request.user
     return render(request, 'labeling/index.html', context)
@@ -168,10 +218,14 @@ def get_tweet_data(request):
     context = {}
     if request.user.is_authenticated:
         try:
-            random_tweet = get_random_tweet()
-            tweet_json = {"full_text": random_tweet.full_text, "id": random_tweet.id, "url": random_tweet.url,
-                    "tweet_group": random_tweet.tweet_group, "status": random_tweet.status}
-            context = {"tweet":tweet_json, "labels": random_tweet.labels_manual}
+            tweets_default = 1
+            number_of_random_tweets = parse_int(request.GET.get('n', tweets_default), tweets_default)
+            context["tweets"] = []
+            random_tweets = get_random_tweets(number_of_random_tweets)
+            for random_tweet in random_tweets:
+                tweet_json = {"full_text": random_tweet.full_text, "id": random_tweet.id, "url": random_tweet.url,
+                        "tweet_group": random_tweet.tweet_group, "status": random_tweet.status}
+                context["tweets"].append({"tweet":tweet_json, "labels": random_tweet.labels_manual})
         except EmptyQueryError:
             context["error"] = "No tweets in set."
     else:
@@ -179,25 +233,23 @@ def get_tweet_data(request):
     return JsonResponse(context)
 
 
-def get_random_tweet():
+def parse_int(n, default=None):
+    try:
+        return int(n)
+    except:
+        return default
+
+
+def get_random_tweets(n=10):
     tweets = Tweet.objects.filter(status="full_text, active") # select random tweet
     if tweets:
-        return random.choice(tweets) #Tweet.objects.get(id=12)
+        return tweets.order_by("?")[:n]
     raise EmptyQueryError("No tweets in set")
 
 
 def errornotifier(request):
     e = request.body.decode("utf-8")
-
-    send_mail(
-        'Tweeti error',
-        'Error occured at ' + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "\n\n" + e,
-        'tweetitool@gmail.com',
-        ['laurens.muter@gmail.com'],
-        fail_silently=False,
-    )
-
-    context = {"message": "notification reported"}
+    context = {"message": 'Error occured at ' + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "\n\n" + e}
     return JsonResponse(context)
 
 
@@ -295,8 +347,6 @@ class EmptyQueryError(Exception):
     pass
 
 
-
-
 class TweetViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
@@ -304,3 +354,5 @@ class TweetViewSet(viewsets.ModelViewSet):
     queryset = get_labeled_tweets()
     serializer_class = TweetSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+

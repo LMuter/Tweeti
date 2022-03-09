@@ -32,9 +32,9 @@ class TweetAdmin(admin.ModelAdmin):
 
 
 class LabelAdmin(admin.ModelAdmin):
-    fields = ['label_name', 'label_group', 'created_at', 'updated_at']
+    fields = ['label_name', 'parent_label', 'order', 'label_color', 'shortcut', 'created_at', 'updated_at']
     readonly_fields = ['created_at', 'updated_at']
-    list_display = ('label_name', 'label_group', 'created_at', 'updated_at')
+    list_display = ('label_name', 'parent_label', 'order', 'label_color', 'shortcut', 'created_at', 'updated_at')
 
 
 class DocumentAdmin(admin.ModelAdmin):

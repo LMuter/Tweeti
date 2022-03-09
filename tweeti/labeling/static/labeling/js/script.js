@@ -42,14 +42,9 @@ $(document).ready(function() {
     }
   });
 
-  $("#is-related-topic").click(function(event) {
-    addIsRelatedTopic();
+  $(".label-button").on("click", function(e) {
+    handleLabelButton($(this));
   });
-
-  $("#event-related").click(function(event) {
-    addIsEventRelated();
-  });
-
 
   $("#exclude_tweet_button").on("click", function(e) {
     if (confirm("Are you sure you want to exclude this tweet from the dataset?")) {
@@ -118,8 +113,6 @@ $(document).ready(function() {
       menuItemSelected = undefined;
     }
   }
-
-
 });
 
 
@@ -128,21 +121,21 @@ function addNoLabel() {
 }
 
 
-function addIsRelatedTopic() {
-  console.log("is-related-topic");
-  addLabel($("#is-related-topic").text(), "orange_label");
+function handleLabelButton($labelButton) {
+  var $id = $labelButton.attr('id');
+  var relatedMenu = $("ul[for=" + $id + "]");
+  if (relatedMenu.length == 0 && $id != "no-labels") {
+    var labelColor = getColorClass($labelButton);
+    console.log($labelButton.text().trim());
+    addLabel($labelButton.text().trim(), labelColor);
+  }
 }
 
 
-function addIsEventRelated() {
-  console.log("is-event-related");
-  addLabel($("#event-related").text(), "purple_label");
-}
-
-
-function addLabel(labelText) {
+function addLabel(labelText, labelColor) {
   if (!window.tweet.labels.includes(labelText)) {
-    addLabelChip(labelText, getLabelColor(labelText));
+    labelColor = labelColor || getLabelColor(labelText);
+    addLabelChip(labelText, labelColor);
     let textSelection = getSelectionText();
     window.tweet.labels.push(labelText);
     if (textSelection) {
@@ -179,11 +172,31 @@ function init_window(prevTweet) {
     displayTweet(prevTweet);
   } else if (window.nextTweets.length > 0) {
     displayTweet(window.nextTweets.pop());
+    // fetch new tweets when last tweet is displayed
+    if (window.nextTweets.length == 0) {
+      fetchTweet(addNextTweet);
+    }
   } else {
-    url = "tweet_data";
-    $.getJSON(url, function(tweet){
-      if (tweet.error === undefined) {
-        console.log("Fatch tweet");
+    fetchTweet(displayTweet);
+  }
+}
+
+
+function addNextTweet(tweet) {
+  console.log("additional Next Tweet");
+  window.nextTweets.push(tweet)
+}
+
+
+function fetchTweet(callBack) {
+  console.log("Fetch tweets");
+  if (window.tweetRequest != undefined) {
+    window.tweetRequest.abort();
+  }
+  url = "tweet_data?n=10";
+  window.tweetRequest = $.getJSON(url, function(data) {
+    if (data.error === undefined) {
+      $.each( data.tweets, function( index, tweet ) {
         tweetLabelData = JSON.parse(tweet.labels);
         console.log(tweetLabelData);
         tweet.selections = tweetLabelData.selections;
@@ -191,12 +204,13 @@ function init_window(prevTweet) {
         tweet.displayStart = tweetLabelData.displayStart;
         tweet.displayTime = tweetLabelData.displayTime;
         tweet.labels = tweetLabelData.labels;
-        displayTweet(tweet);
-      } else {
-        displayErrorMessage(tweet.error);
-      }
-    });
-  }
+        addNextTweet(tweet);
+      });
+      callBack(window.nextTweets.pop())
+    } else {
+      displayErrorMessage(data.error);
+    }
+  });
 }
 
 
@@ -388,22 +402,24 @@ function addLabelChip(label_text, label_color) {
 function getLabelColor(labelText) {
   var menuItem = $("li:contains(" + labelText + ")");
   if (menuItem.length > 0) {
-    var classList = menuItem.attr('class').split(/\s+/);
-    for (var i = 0; i < classList.length; i++) {
-      if (classList[i].startsWith("group-")) {
-        return classList[i].substring(6);
-      }
+    return getColorClass(menuItem);
+  }
+  var buttonItem = $("button:contains(" + labelText + ")");
+  if (buttonItem.length > 0) {
+    return getColorClass(buttonItem);
+  }
+  console.log(buttonItem);
+  return "gray_label";
+}
+
+
+function getColorClass($labelContainer) {
+  var classList = $labelContainer.attr('class').split(/\s+/);
+  for (var i = 0; i < classList.length; i++) {
+    if (classList[i].startsWith("group-")) {
+      return classList[i].substring(6);
     }
   }
-
-  if (labelText == $("#is-related-topic").text()) {
-    return "orange_label";
-  }
-
-  if (labelText == $("#event-related").text()) {
-    return "purple_label";
-  }
-
   return "gray_label";
 }
 
