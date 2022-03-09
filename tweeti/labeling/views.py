@@ -44,7 +44,7 @@ def get_sub_label_list(sub_labels, color=None):
 
 
 def get_sub_labels_context(sub_labels, parent):
-    parent_name = parent.label_name.replace(" ", "_").lower()
+    parent_name = parent.label_name.replace(" ", "-").lower()
     sub_labels = get_sub_label_list(sub_labels, parent.label_color)
     return {'parent_name': parent_name,
             'sub_labels' : sub_labels,
@@ -249,7 +249,16 @@ def get_random_tweets(n=10):
 
 def errornotifier(request):
     e = request.body.decode("utf-8")
-    context = {"message": 'Error occured at ' + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "\n\n" + e}
+
+    send_mail(
+        'Tweeti error',
+        'Error occured at ' + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "\n\n" + e,
+        'tweetitool@gmail.com',
+        ['laurens.muter@gmail.com'],
+        fail_silently=False,
+    )
+
+    context = {"message": "notification reported"}
     return JsonResponse(context)
 
 
