@@ -19,5 +19,8 @@ fi
 python manage.py flush --no-input
 python manage.py migrate
 
+# Example code to create superuser
+python manage.py createsuperuser --noinput --username admin --email test@example.com
+
 exec "$@"
 

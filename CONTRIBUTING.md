@@ -5,19 +5,23 @@ I'm happy you're reading this, since all developers who want to help are more th
 
 ## About Tweeti
 
-Tweeti is an opensource project to label Tweets. I know there are already many labeling tools, but our aime is to build a tool that is light weight, easy to use and suitable for text analysis. You can find a life version of [Tweeti](https://www.tweeti.nl).
+Tweeti is an open-source project designed for labeling tweets. While there are already many labeling tools available, our aim is to build a tool that is lightweight, easy to use, and particularly suited for text analysis.
 
 
 ## Submitting changes
 
-Please send a [GitLab Merge Request to the Tweeti project](https://gitlab.com/tweeti/tweeti_labeling/pull/new/master) with a clear list of what you've done (more about [merge requests](https://docs.gitlab.com/ee/user/project/merge_requests/)). When you send a merge request, we will love you forever if you include pytest or Cucumber specs. Good test coverage is a good way to prevent time consuming errors. Please follow our coding conventions (below) and make sure all of your commits are atomic (one feature per commit).
+Please submit a [GitHub Pull Request to the Tweeti project](https://github.com/LMuter/Tweeti/pulls) with a clear list of what you've done (more about [pull requests](https://docs.github.com/en/pull-requests)). When you submit a pull request, we would greatly appreciate it if you include pytest or Cucumber specs. Good test coverage is essential for preventing time-consuming errors. Please follow our coding conventions (outlined below) and ensure all your commits are atomic (one feature per commit).
 
-Always write a clear log message for your commits. One-line messages are fine for small changes, but bigger changes should look like this:
+Always write a clear commit message. One-line messages are fine for small changes, but for bigger changes, your commit message should look like this:
 
-    $ git commit -m "A brief summary of the commit
-    >
-    > A paragraph describing what changed and its impact."
+
+```
+$ git commit -m "A brief summary of the commit
+>
+> A paragraph describing what changed and its impact."
+```
 
 
 Thanks,
+
 Laurens Müter

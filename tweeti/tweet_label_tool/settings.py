@@ -141,8 +141,8 @@ DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
 # For more information on Django see: https://docs.djangoproject.com/en/3.1/topics/email/#topic-email-backends
 # For more information on anymail see: https://pypi.org/project/django-anymail/
 ANYMAIL = {
-    "API_URL": os.environ.get("API_URL"),
-    "API_KEY": os.environ.get("API_KEY"),
+    "API_URL": os.environ.get("EMAIL_API_URL"),
+    "API_KEY": os.environ.get("EMAIL_API_KEY"),
 }
 
 
