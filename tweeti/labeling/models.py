@@ -20,33 +20,32 @@ class Tweet(models.Model):
 
 class Label(models.Model):
     LABEL_COLOR_CHOICES = [
-            ('red_label',          'RED'),
-            ('blue_label',         'BLUE'),
-            ('green_label',        'GREEN'),
-            ('yellow_label',       'YELLOW'),
-            ('purple_label',       'PURPLE'),
-            ('orange_label',       'ORANGE'),
-            ('cyan_label',         'CYAN'),
-            ('brown_label',        'BROWN'),
-            ('lime_label',         'LIME'),
-            ('olive_label',        'OLIVE'),
-            ('teal_label',         'TEAL'),
-            ('aqua_label',         'AQUA'),
-            ('azure_label',        'AZURE'),
-            ('bisque_label',       'BISQUE'),
-            ('fuchsia_label',      'FUCHSIA'),
-            ('chocolate_label',    'CHOCOLATE'),
-            ('coral_label',        'CORAL'),
-            ('darksalmon_label',   'DARKSALMOn'),
-            ('darkseagreen_label', 'DARKSEAGReen'),
-            ('deeppink_label',     'DEEPPINK'),
-            ('goldenrod_label',    'GOLDENROD'),
-            ('greenyellow_label',  'GREENYELLOW'),
-            ]
-
+        ('red_label', 'RED'),
+        ('blue_label', 'BLUE'),
+        ('green_label', 'GREEN'),
+        ('yellow_label', 'YELLOW'),
+        ('purple_label', 'PURPLE'),
+        ('orange_label', 'ORANGE'),
+        ('cyan_label', 'CYAN'),
+        ('brown_label', 'BROWN'),
+        ('lime_label', 'LIME'),
+        ('olive_label', 'OLIVE'),
+        ('teal_label', 'TEAL'),
+        ('aqua_label', 'AQUA'),
+        ('azure_label', 'AZURE'),
+        ('bisque_label', 'BISQUE'),
+        ('fuchsia_label', 'FUCHSIA'),
+        ('chocolate_label', 'CHOCOLATE'),
+        ('coral_label', 'CORAL'),
+        ('darksalmon_label', 'DARKSALMOn'),
+        ('darkseagreen_label', 'DARKSEAGReen'),
+        ('deeppink_label', 'DEEPPINK'),
+        ('goldenrod_label', 'GOLDENROD'),
+        ('greenyellow_label', 'GREENYELLOW'),
+    ]
 
     label_name = models.CharField(max_length=255, help_text="name or reference to a label")
-    #label_group = models.CharField(max_length=255, blank=True, null=True, help_text="additional parameter to group labels")
+    # label_group = models.CharField(max_length=255, blank=True, null=True, help_text="additional parameter to group labels")
     parent_label = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, help_text="optional parameter to allow hierarchical labels")
     order = models.IntegerField(default=0, help_text="sorting order of lables displayed on the tool (left-right, top-bottom) starts with 0")
 

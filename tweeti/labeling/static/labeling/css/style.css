@@ -1,6 +1,11 @@
-button.close {
-  position: inherit;
-  right: 12px;
+button.mdl-chip__action.close {
+    position: relative;
+    left: calc((100% - 6px) - 2em);
+}
+
+div.mdl-layout__drawer-button > i.material-icons {
+    position: relative;
+    top: 12px;
 }
 
 button.user-button {
@@ -19,7 +24,7 @@ button.user-button {
 
 div.page-content {
   font-size: 16px;
-  margin: 80px auto 0px auto;
+  margin: 50px auto 0px auto;
   width: 670px;
 }
 

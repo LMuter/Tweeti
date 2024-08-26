@@ -1,6 +1,4 @@
 
-// TODO when tweet is displayed three times, finalize
-// TODO show embedded tweet
 
 
 $(document).ready(function() {
@@ -37,9 +35,7 @@ $(document).ready(function() {
   });
 
   $("#no-labels").click(function(event) {
-    if (window.tweet.labels.length == 0) {
-      addNoLabel();
-    }
+    checkNoLabel();
   });
 
   $(".label-button").on("click", function(e) {
@@ -49,15 +45,13 @@ $(document).ready(function() {
   $("#exclude_tweet_button").on("click", function(e) {
     if (confirm("Are you sure you want to exclude this tweet from the dataset?")) {
       console.log("exclude tweet");
-      excludeTweet();
-      init_window();
+      $.when(excludeTweet()).then(init_window());
     }
   });
 
   $("#discuss_tweet_button").on("click", function(e) {
     console.log("discuss tweet");
-    discussTweet();
-    init_window();
+    $.when(discussTweet()).then(init_window());
   });
 
   $(".mdl-layout__header").on("click", function(event) {
@@ -87,7 +81,7 @@ $(document).ready(function() {
 
   var menuItemSelected;
   $(document).keypress(function(event) {
-    if (menuItemSelected === undefined) {
+    if (isNull(menuItemSelected)) {
       triggerMenuSelect(event.key.toUpperCase());
     } else {
       triggerMenuItemSelect(event.key.toUpperCase());
@@ -116,15 +110,23 @@ $(document).ready(function() {
 });
 
 
-function addNoLabel() {
-  addLabel($("#no-labels").text());
+function checkNoLabel() {
+  handleLabelButton($("#no-labels"));
+}
+
+
+function canAddLabel(relatedMenuLenght, buttonId) {
+  if (buttonId == "no-labels") {
+    return window.tweet.labels.length == 0;
+  }
+  return relatedMenuLenght == 0;
 }
 
 
 function handleLabelButton($labelButton) {
   var $id = $labelButton.attr('id');
   var relatedMenu = $("ul[for=" + $id + "]");
-  if (relatedMenu.length == 0 && $id != "no-labels") {
+  if (canAddLabel(relatedMenu.length, $id)) {
     var labelColor = getColorClass($labelButton);
     console.log($labelButton.text().trim());
     addLabel($labelButton.text().trim(), labelColor);
@@ -139,7 +141,7 @@ function addLabel(labelText, labelColor) {
     let textSelection = getSelectionText();
     window.tweet.labels.push(labelText);
     if (textSelection) {
-      window.tweet.selections = window.tweet.selections == undefined ? {} : window.tweet.selections;
+      window.tweet.selections = isNull(window.tweet.selections) ? {} : window.tweet.selections;
       window.tweet.selections[labelText] = textSelection;
     }
     console.log(window.tweet.labels);
@@ -149,14 +151,12 @@ function addLabel(labelText, labelColor) {
 
 
 function init_window(prevTweet) {
-  if (typeof window.tweet !== 'undefined' & typeof prevTweet === 'undefined') {
+  if (notNull(window.tweet) & isNull(prevTweet)) {
     window.tweet.displayTime += new Date() - window.tweet.displayStart;
     window.tweet.displayCount += 1;
 
     // add no-label when no labels are provided by user
-    if (window.tweet.labels.length == 0) {
-      addNoLabel();
-    }
+    checkNoLabel();
 
     window.previousTweets.push(tweet);
 
@@ -168,10 +168,11 @@ function init_window(prevTweet) {
   $("#tweet_labels").text("")
   $("#tweet_text").text("")
   addSpinner();
-  if (typeof prevTweet !== 'undefined') {
+  if (notNull(prevTweet)) {
     displayTweet(prevTweet);
   } else if (window.nextTweets.length > 0) {
-    displayTweet(window.nextTweets.pop());
+    var nextTweet = window.nextTweets.pop();
+    displayTweet(nextTweet);
     // fetch new tweets when last tweet is displayed
     if (window.nextTweets.length == 0) {
       fetchTweet(addNextTweet);
@@ -190,12 +191,12 @@ function addNextTweet(tweet) {
 
 function fetchTweet(callBack) {
   console.log("Fetch tweets");
-  if (window.tweetRequest != undefined) {
+  if (notNull(window.tweetRequest)) {
     window.tweetRequest.abort();
   }
   url = "tweet_data?n=10";
   window.tweetRequest = $.getJSON(url, function(data) {
-    if (data.error === undefined) {
+    if (isNull(data.error)) {
       $.each( data.tweets, function( index, tweet ) {
         tweetLabelData = JSON.parse(tweet.labels);
         console.log(tweetLabelData);
@@ -226,19 +227,33 @@ function previousTweet() {
 
 
 function displayTweet(tweet) {
-  console.log(tweet);
-  let labels = parseJson(tweet.labels);
-  window.tweet = tweet;
-  window.tweet.labels = parseLabels(labels);
-  window.tweet.selections = parseSelections(tweet);
-  window.tweet.displayTime = (typeof window.tweet.displayTime === 'undefined') ? 0 : window.tweet.displayTime;
-  window.tweet.displayStart = new Date();
-  window.tweet.displayCount = (typeof window.tweet.displayCount === 'undefined') ? 0 : window.tweet.displayCount;
-  $("#tweet_text").text(tweet.tweet.full_text);
-  $("#tweet_url").html("<a href='" + tweet.tweet.url + "' target='_blank'>Source</a>");
-  for(var n=0; n<window.tweet.labels.length;n++) {
-    addLabelChip(tweet.labels[n], getLabelColor(tweet.labels[n]));
+  if (notNull(tweet)) {
+    console.log(tweet);
+    var labels = parseJson(tweet.labels);
+    window.tweet = tweet;
+    window.tweet.labels = parseLabels(labels);
+    window.tweet.selections = parseSelections(tweet);
+    window.tweet.displayTime = isNull(window.tweet.displayTime) ? 0 : window.tweet.displayTime;
+    window.tweet.displayStart = new Date();
+    window.tweet.displayCount = isNull(window.tweet.displayCount) ? 0 : window.tweet.displayCount;
+    var fullText = isNull(tweet.tweet) ? "" : tweet.tweet.full_text;
+    var tweetText = linkify(fullText);
+    $("#tweet_text").html(tweetText);
+    $("#tweet_url").html("<a href='" + tweet.tweet.url + "' target='_blank'>Source</a>");
+    for(var n=0; n<window.tweet.labels.length;n++) {
+      addLabelChip(tweet.labels[n], getLabelColor(tweet.labels[n]));
+    }
+  } else {
+    init_window();
   }
+}
+
+
+function linkify(text) {
+  var urlRegex =/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+  return text.replace(urlRegex, function(url) {
+    return '<a href="' + url + '">' + url + '</a>';
+  });
 }
 
 
@@ -255,11 +270,20 @@ function getAverageDisplayTime() {
 
 
 function getCurrentDisplayTime() {
-  if (typeof window.tweet != 'undefined') {
-    var currDisplayTime = (typeof window.tweet.displayTime === 'undefined') ? 0 : window.tweet.displayTime;
+  if (notNull(window.tweet)) {
+    var currDisplayTime = isNull(window.tweet.displayTime) ? 0 : window.tweet.displayTime;
     return currDisplayTime + (new Date() - window.tweet.displayStart);
   }
   return 0;
+}
+
+
+function notNull(o) {
+  return !isNull(o);
+}
+
+function isNull(o) {
+  return typeof o == 'undefined' || o == null
 }
 
 
@@ -270,7 +294,7 @@ function getNumberOfTweetsDisplayed() {
 
 function parseLabels(labels) {
   console.log(labels);
-  if (labels == undefined) {
+  if (isNull(labels)) {
     return [];
   } else {
     return labels;
@@ -305,8 +329,12 @@ function displayErrorMessage(errorMessage) {
 
 function updateServerLabels() {
   let url = "update_labels";
-  let data = {"tweet_id": window.tweet.tweet.id, "labels": window.tweet.labels, "selections": window.tweet.selections,
-    "displayTime": window.tweet.displayTime + new Date() - window.tweet.displayStart, "displayCount": window.tweet.displayCount + 1
+  let data = {
+    "tweet_id": window.tweet.tweet.id,
+    "labels": window.tweet.labels,
+    "selections": window.tweet.selections,
+    "displayTime": getCurrentDisplayTime(),
+    "displayCount": window.tweet.displayCount + 1,
   };
   updateTweet(url, data);
 }

@@ -20,6 +20,7 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('exclude_tweet', views.exclude_tweet, name='exclude_tweet'),
     path('discuss_tweet', views.discuss_tweet, name='discuss_tweet'),
-    #path('manual_remove_labels', views.manual_remove_labels, name='manual_remove_labels'),
-    path('errornotifier', csrf_exempt(views.errornotifier), name="errornotifier")
+    # path('manual_remove_labels', views.manual_remove_labels, name='manual_remove_labels'),
+    path('errornotifier', csrf_exempt(views.errornotifier), name="errornotifier"),
+    path('send_test_email', views.send_test_email, name="send_test_email"),
 ]

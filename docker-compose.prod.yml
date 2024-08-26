@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: ./back_end
+      dockerfile: Dockerfile.prod
+    command: gunicorn tweet_label_tool.wsgi:application --timeout 600 --log-level=debug --bind 0.0.0.0:8000
+    volumes:
+      - static_volume:/home/app/web/static
+    ports:
+      - 1020:8000
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - db
+  db:
+    container_name: tweeti_labeling_db
+    image: postgres:13.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env.prod.db
+
+volumes:
+  postgres_data:
+  static_volume:
