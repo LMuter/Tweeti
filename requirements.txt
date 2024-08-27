@@ -10,7 +10,6 @@ idna==2.10
 importlib-metadata==4.5.0
 lxml==4.6.2
 Markdown==3.3.4
-numpy==1.19.5
 oauthlib==3.1.0
 pandas==1.2.0
 PySocks==1.7.1
@@ -29,3 +28,7 @@ unshortenit==0.4.0
 urlexpander==0.0.36
 urllib3==1.26.2
 zipp==3.4.1
+django-anymail==8.6
+gunicorn==20.1.0
+psycopg2-binary==2.9.1
+numpy==1.26.4
