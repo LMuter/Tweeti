@@ -16,8 +16,10 @@ N               Add "No Labels" label
 
 ## Label Menu Shortcuts
 
-Defined by the admin (shortcut button are colord red.
+Defined within the admin view, each label button contains a red token which represeents the shortcut for the label (see figure \ref{fig:shortcuts}. Note that if a button is related to a menu is steat of a label, the label menu will appear which includes additional buttons with shortcuts that can be used to select the related label.
 
+
+![Label shortcuts are presented in red. \label{fig:shortcuts}](resources/images/tweeti_shortcuts.png)
 
 
 \newpage{}
